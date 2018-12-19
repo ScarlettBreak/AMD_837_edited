@@ -47,6 +47,7 @@ GLOBAL Int AMD_order
     if (Ai == (Int *) NULL || Ap == (Int *) NULL || P == (Int *) NULL || n < 0)
     {
 	if (info) Info [AMD_STATUS] = AMD_INVALID ;
+    printf("condition not satisfied(1): inputs exist and n is >=0\n");
 	return (AMD_INVALID) ;	    /* arguments are invalid */
     }
 
@@ -63,6 +64,7 @@ GLOBAL Int AMD_order
     if (nz < 0)
     {
 	if (info) Info [AMD_STATUS] = AMD_INVALID ;
+    printf("condition not satisfied(2): nz <0 & info\n");
 	return (AMD_INVALID) ;
     }
 
@@ -79,6 +81,7 @@ GLOBAL Int AMD_order
     if (!AMD_valid (n, n, Ap, Ai))
     {
 	if (info) Info [AMD_STATUS] = AMD_INVALID ;
+    printf("condition not satisfied(3):\n");
 	return (AMD_INVALID) ;	    /* matrix is invalid */
     }
 

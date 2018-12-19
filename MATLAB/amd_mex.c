@@ -36,7 +36,9 @@ void mexFunction
     const mxArray *prhs[]
 )
 {
-    int i, m, n, *Ap, *Ai, *P, nc, result, spumoni, full ;
+    // int i, m, n, *Ap, *Ai, *P, nc, result, spumoni, full ;
+    int i, nc, spumoni, full ;
+    size_t m, n, *Ap, *Ai, *P, result;
     double *Pout, *InfoOut, Control [AMD_CONTROL], Info [AMD_INFO], *ControlIn;
     mxArray *A, *string, *parameter ;
 
@@ -121,6 +123,15 @@ void mexFunction
     }
     Ap = mxGetJc (A) ;
     Ai = mxGetIr (A) ;
+
+    // printf("size of mxGetJc (A) is %d,size of int is%d,size of unsigned long is%d\n", sizeof(mxGetJc (A)),sizeof(int),sizeof(unsigned long));
+    /* 查错：Ap 不对劲 */
+    printf("Ap=");
+    for(i=0;i<n+1;i++){
+          printf("%lu,",Ap[i]);
+    }
+    printf("\n");
+
     if (spumoni > 0)
     {
 	mexPrintf ("    input matrix A has %d nonzero entries\n", Ap [n]) ;

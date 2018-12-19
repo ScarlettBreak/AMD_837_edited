@@ -36,11 +36,14 @@
 #ifndef AMD_H
 #define AMD_H
 
-int amd_order (		    /* returns 0 if OK, negative value if error */
-    int n,		    /* A is n-by-n.  n must be >= 0. */
-    const int Ap [ ],	    /* column pointers for A, of size n+1 */
-    const int Ai [ ],	    /* row indices of A, of size nz = Ap [n] */
-    int P [ ],		    /* output permutation, of size n */
+/* size_t */
+#include "stddef.h"
+
+size_t amd_order (		    /* returns 0 if OK, negative value if error */
+    size_t n,		    /* A is n-by-n.  n must be >= 0. */
+    const size_t Ap [ ],	    /* column pointers for A, of size n+1 */
+    const size_t Ai [ ],	    /* row indices of A, of size nz = Ap [n] */
+    size_t P [ ],		    /* output permutation, of size n */
     double Control [ ],	    /* input Control settings, of size AMD_CONTROL */
     double Info [ ]	    /* output Info statistics, of size AMD_INFO */
 ) ;
@@ -255,13 +258,13 @@ long amd_l_order (	    /* see above for description of arguments */
  * flagged with the AMD_INVALID error code.
  */ 
 
-int amd_preprocess
+size_t amd_preprocess
 (
-    int n,
-    const int Ap [ ],
-    const int Ai [ ],
-    int Rp [ ],
-    int Ri [ ]
+    size_t n,
+    const size_t Ap [ ],
+    const size_t Ai [ ],
+    size_t Rp [ ],
+    size_t Ri [ ]
 ) ;
 
 long amd_l_preprocess

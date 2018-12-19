@@ -80,6 +80,9 @@
 /* from math.h: sqrt */
 #include <math.h>
 
+/* size_t */
+#include "stddef.h"
+
 /* ------------------------------------------------------------------------- */
 /* MATLAB include files (only if being used in or via MATLAB) */
 /* ------------------------------------------------------------------------- */
@@ -190,8 +193,8 @@
 
 #else
 
-#define Int int
-#define ID "%d"
+#define Int size_t
+#define ID "%lu"
 #define Int_MAX INT_MAX
 #define Int_MIN INT_MIN
 

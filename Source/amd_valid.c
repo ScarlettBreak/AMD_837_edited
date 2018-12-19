@@ -37,27 +37,37 @@ GLOBAL Int AMD_valid
 )
 {
     Int nz, j, p1, p2, ilast, i, p ;
+
+    /* make sure(1,2): n_row >= 0,n_col >= 0  */
     if (n_row < 0 || n_col < 0)
     {
 	AMD_DEBUG0 (("n must be >= 0: "ID" "ID"\n", n_row, n_col)) ;
+	printf("n_row-by-n_col condition(1,2) not satisfied\n");
 	return (FALSE) ;
     }
+
+    /* make sure(3,4): nz = Ap [n_col] >= 0  */
     nz = Ap [n_col] ;
     if (Ap [0] != 0 || nz < 0)
     {
 	/* column pointers must start at Ap [0] = 0, and Ap [n] must be >= 0 */
 	AMD_DEBUG0 (("column 0 pointer bad or nz < 0\n")) ;
+	printf("n_row-by-n_col condition(3,4) not satisfied\n");
 	return (FALSE) ;
     }
+
     for (j = 0 ; j < n_col ; j++)
     {
 	p1 = Ap [j] ;
 	p2 = Ap [j+1] ;
 	AMD_DEBUG2 (("\nColumn: "ID" p1: "ID" p2: "ID"\n", j, p1, p2)) ;
+
+	/* make sure(5): Ap [j] <= Ap [j+1] for all j in the range 0 to n_col. */
 	if (p1 > p2)
 	{
 	    /* column pointers must be ascending */
 	    AMD_DEBUG0 (("column "ID" pointer bad\n", j)) ;
+	    printf("n_row-by-n_col condition(5) not satisfied\n");
 	    return (FALSE) ;
 	}
 	ilast = EMPTY ;
@@ -65,10 +75,17 @@ GLOBAL Int AMD_valid
 	{
 	    i = Ai [p] ;
 	    AMD_DEBUG3 (("row: "ID"\n", i)) ;
+
+	    /* make sure(6): 
+            * row indices in Ai [Ap [j] ... Ap [j+1]-1] must be sorted in ascending
+            * order, must be in the range 0 to n_row-1, and no duplicate entries
+            * can exist.
+        */
 	    if (i <= ilast || i >= n_row)
 	    {
 		/* row index out of range, or unsorted */
 		AMD_DEBUG0 (("index out of range, col "ID" row "ID"\n", j, i));
+		printf("n_row-by-n_col condition(6) not satisfied\n");
 		return (FALSE) ;
 	    }
 	    ilast = i ;
