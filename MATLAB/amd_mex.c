@@ -119,8 +119,25 @@ void mexFunction
 	}
 	mexCallMATLAB (1, &A, 1, (mxArray **) prhs, "sparse") ;
     }
-    Ap = mxGetJc (A) ;
-    Ai = mxGetIr (A) ;
+
+    // [begin:debug]
+    mwIndex  *ir, *jc;
+    jc = mxGetJc (A) ;
+    ir = mxGetIr (A) ;
+
+    int num_nonzero = jc[n]; // number of nonzeros in A
+    int jc_int[n+1],ir_int[num_nonzero+1]; // mxIndex --> int 的中间数组
+
+    for (int i=0;i<=n;i++){
+        jc_int[i] = (int)jc[i];
+    }
+    Ap = jc_int;
+    for (int i=0;i<=num_nonzero;i++){
+        ir_int[i] = (int)ir[i];
+    }
+    Ai = ir_int;
+    // [end:debug]
+
     if (spumoni > 0)
     {
 	mexPrintf ("    input matrix A has %d nonzero entries\n", Ap [n]) ;
