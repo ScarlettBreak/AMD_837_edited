@@ -16,7 +16,7 @@ function amd_demo
 % additional analysis of the matrix via MATLAB's symbfact routine.
 
 % First, print the help information for AMD
-help amd
+help amd_test
 
 % Get the Harwell/Boeing can_24 matrix.  This is an example matrix from the
 % MATLAB-accessible UF sparse matrix collection, and can be loaded into
@@ -44,10 +44,10 @@ spparms ('spumoni', 1) ;
 % order the matrix.  Note that the Info argument is optional.
 fprintf ('\nIf the next step fails, then you have\n') ;
 fprintf ('not yet compiled the AMD mexFunction.\n') ;
-[p, Info] = amd (A) ;
+[p, Info] = amd_test (A) ;
 
 % order again, but this time print some statistics
-[p, Info] = amd (A, [10 1 1]) ;
+[p, Info] = amd_test (A, [10 1 1]) ;
 
 fprintf ('Permutation vector:\n') ;
 fprintf (' %2d', p) ;

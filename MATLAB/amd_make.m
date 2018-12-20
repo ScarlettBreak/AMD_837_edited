@@ -12,7 +12,7 @@ function amd_make
 
 help amd_make
 fprintf ('Compiling the AMD mexFunction:\n') ;
-cmd = sprintf ('mex -inline -O -output amd -I..%sInclude amd_mex.c', filesep) ;
+cmd = sprintf ('mex -O -output amd_test -I..%sInclude amd_mex.c', filesep) ;
 files = {'amd_order', 'amd_dump', 'amd_postorder', 'amd_post_tree', ...
     'amd_aat', 'amd_2', 'amd_1', 'amd_defaults', 'amd_control', 'amd_info', ...
     'amd_valid' } ;
@@ -20,11 +20,12 @@ for i = 1 : length (files)
     cmd = sprintf ('%s ..%sSource%s%s.c', cmd, filesep, filesep, files {i}) ;
 end
 fprintf ('%s\n', cmd) ;
-try
-    eval (cmd) ;
-catch
-    fprintf ('Compilation not successful.\n') ;
-end
+% try
+%     eval (cmd) ;
+% catch
+%     fprintf ('Compilation not successful.\n') ;
+% end
+eval (cmd) ;
 
 input ('\nHit enter to run the AMD demo\n') ;
 more on
