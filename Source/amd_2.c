@@ -228,7 +228,7 @@ GLOBAL void AMD_2
  *	    as (-(j)-2).  Row j has the same pattern as row i.  Note that j
  *	    might later be absorbed into another supervariable j2, in which
  *	    case Pe [i] is still FLIP (j), and Pe [j] = FLIP (j2) which is
- *	    < EMPTY, where EMPTY is defined as (-1) in amd_internal.h.
+ *	    < EMPTY, where EMPTY is defined as (-1)(所以，上面是-j-2) in amd_internal.h.
  *
  *	Unabsorbed element e:  the index into Iw of the description of element
  *	    e, if e has not yet been absorbed by a subsequent element.  Element
@@ -693,11 +693,48 @@ GLOBAL void AMD_2
 	/* ----------------------------------------------------------------- */
 
 	ASSERT (mindeg >= 0 && mindeg < n) ;
-	for (deg = mindeg ; deg < n ; deg++)
+//寻找最小的继承代价
+	int var_i,var_j,var_k;
+	int col_k,col_n;
+	int adj_num=0,sum_adj_num=0;
+	int min_i=-1,min_sum=n*n+n;
+	int combine_num,fillin_num;
+	for (var_i=0;var_i<n;var_i++)
+	{	
+		if(Elen[var_i]>EMPTY)
+		{
+			col_k=Pe[var_i]+Elen[var_i];
+			col_n=Pe[var_i]+Len[var_i]-1;
+			for(var_j=col_k;var_j<=col_n;var_j++)
+			{
+				for(var_k=col_k;var_k<=col_n;var_k++)
+				{
+					if(Iw[var_j]==var_k)
+					{
+						adj_num++;
+					}
+				}
+				sum_adj_num=sum_adj_num+adj_num;//计算总边数
+			}
+			combine_num=(col_n-col_k+1)*(col_n-col_k)/2;//完全连通图的边数
+			fillin_num=combine_num-sum_adj_num;//即填入元数
+			if (sum_adj_num+Degree[var_i]<min_sum)
+			{
+				min_sum=sum_adj_num+Degree[var_i];//计算最小填入代价
+				min_i=var_i;
+			}
+		}
+	}
+	deg=Degree[min_i];
+	me=min_i;
+
+/*	for (deg = mindeg ; deg < n ; deg++)
 	{
 	    me = Head [deg] ;
 	    if (me != EMPTY) break ;
-	}
+	}*/
+
+
 	mindeg = deg ;
 	ASSERT (me >= 0 && me < n) ;
 	AMD_DEBUG1 (("=================me: "ID"\n", me)) ;
@@ -1431,7 +1468,7 @@ GLOBAL void AMD_2
 /* ========================================================================= */
 /* RESTORE DEGREE LISTS AND REMOVE NONPRINCIPAL SUPERVARIABLES FROM ELEMENT */
 /* ========================================================================= */
-
+/*此处进行修改*/
 	p = pme1 ;
 	nleft = n - nel ;
 	for (pme = pme1 ; pme <= pme2 ; pme++)
