@@ -106,7 +106,7 @@ void mexFunction
     /* allocate workspace for output permutation */
     /* --------------------------------------------------------------------- */
 
-    P = mxMalloc( (n + 1) * sizeof(int) );
+    P = mxMalloc( (n + 1) * sizeof(size_t) );
 
     /* --------------------------------------------------------------------- */
     /* if A is full, convert to a sparse matrix */
@@ -125,14 +125,14 @@ void mexFunction
     Ap  = mxGetJc( A );
     Ai  = mxGetIr( A );
 
+    // [debug] 查错：Ai 有问题
     /* printf("size of mxGetJc (A) is %d,size of int is%d,size of unsigned long is%d\n", sizeof(mxGetJc (A)),sizeof(int),sizeof(unsigned long)); */
-    /* 查错：Ap 不对劲 */
-    printf( "Ap=" );
-    for ( i = 0; i < n + 1; i++ )
-    {
-        printf( "%lu,", Ap[i] );
-    }
-    printf( "\n一共%d个非零元", Ap[n] );
+    // printf( "Ai=" );
+    // for ( i = 0; i < Ap[n]; i++ )
+    // {
+    //     printf( "%lu,", Ai[i] );
+    // }
+    // printf( "\nAp[n]=%d, mxGetNzmax=%d,#row=%d,#column=%d\n", Ap[n], mxGetNzmax(A), m, n);
 
     if ( spumoni > 0 )
     {

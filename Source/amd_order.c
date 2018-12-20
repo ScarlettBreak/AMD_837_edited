@@ -81,7 +81,7 @@ GLOBAL Int AMD_order
     if (!AMD_valid (n, n, Ap, Ai))
     {
 	if (info) Info [AMD_STATUS] = AMD_INVALID ;
-    printf("condition not satisfied(3):\n");
+    printf("condition not satisfied(3):\n"); // [debug]
 	return (AMD_INVALID) ;	    /* matrix is invalid */
     }
 
@@ -131,6 +131,8 @@ GLOBAL Int AMD_order
     /* --------------------------------------------------------------------- */
 
     AMD_1 (n, Ap, Ai, P, Pinv, Len, slen, S, Control, Info) ;
+
+    printf("stop after line 135,AMD_1 finished\n"); // [debug]
 
     /* --------------------------------------------------------------------- */
     /* free the workspace */
