@@ -24,7 +24,7 @@ help amd_test
 % the UFget function and its supporting routines at
 % http://www.cise.ufl.edu/sparse/mat .
 
-load can_24
+load G2_circuit
 A = Problem.A ;
 n = size (A,1) ;
 
