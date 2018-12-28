@@ -1,20 +1,24 @@
-#------------------------------------------------------------------------------
-# compile the AMD demo (for both GNU make or original make)
+#-----------------------------------------------------------------------------
+# compile the AMD demo
 #-----------------------------------------------------------------------------
 
-all: amd_simple amd_demo amd_demo2
+default: amd_simple amd_demo amd_demo2 amd_l_demo
 
-include ../Make/Make.include
+gak:
+	echo $(SUITESPARSE)
 
-C = $(CC) $(CFLAGS) $(CONFIG) -I../Include
+include ../../SuiteSparse_config/SuiteSparse_config.mk
 
-INC = ../Include/amd.h
+C = $(CC) $(CF) -I../../include
 
-../Lib/libamd.a:
-	( cd ../Source ; make )
+LIB2 = $(LDFLAGS) -L../../lib -lamd -lsuitesparseconfig $(LDLIBS)
 
-../Lib/libamdf77.a:
-	( cd ../Source ; make fortran )
+library:
+	( cd ../../SuiteSparse_config ; $(MAKE) )
+	( cd ../Lib ; $(MAKE) )
+
+f77lib:
+	( cd ../Lib ; $(MAKE) fortran )
 
 #------------------------------------------------------------------------------
 # Create the demo program, run it, and compare the output
@@ -22,18 +26,24 @@ INC = ../Include/amd.h
 
 dist:
 
-amd_demo: amd_demo.c ../Lib/libamd.a $(INC)
-	$(C) -DDINT -o amd_demo amd_demo.c ../Lib/libamd.a $(LIB)
+amd_demo: amd_demo.c library
+	$(C) -o amd_demo amd_demo.c $(LIB2)
 	./amd_demo > my_amd_demo.out
 	- diff amd_demo.out my_amd_demo.out
 
-amd_demo2: amd_demo2.c ../Lib/libamd.a $(INC)
-	$(C) -DDINT -o amd_demo2 amd_demo2.c ../Lib/libamd.a $(LIB)
+amd_l_demo: amd_l_demo.c library
+	$(C) -o amd_l_demo amd_l_demo.c $(LIB2)
+	./amd_l_demo > my_amd_l_demo.out
+	- diff amd_l_demo.out my_amd_l_demo.out
+
+amd_demo2: amd_demo2.c library
+	$(C) -o amd_demo2 amd_demo2.c $(LIB2)
 	./amd_demo2 > my_amd_demo2.out
 	- diff amd_demo2.out my_amd_demo2.out
 
-amd_simple: amd_simple.c ../Lib/libamd.a $(INC)
-	$(C) -DDINT -o amd_simple amd_simple.c ../Lib/libamd.a $(LIB)
+amd_simple: amd_simple.c library
+	echo $(LD_LIBRARY_PATH)
+	$(C) -o amd_simple amd_simple.c $(LIB2)
 	./amd_simple > my_amd_simple.out
 	- diff amd_simple.out my_amd_simple.out
 
@@ -45,13 +55,13 @@ fortran: amd_f77demo amd_f77simple
 
 cross: amd_f77cross
 
-amd_f77demo: amd_f77demo.f ../Lib/libamdf77.a
+amd_f77demo: amd_f77demo.f f77lib
 	$(F77) $(F77FLAGS) -o amd_f77demo amd_f77demo.f ../Lib/libamdf77.a \
 	    $(F77LIB)
 	./amd_f77demo > my_amd_f77demo.out
 	- diff amd_f77demo.out my_amd_f77demo.out
 
-amd_f77simple: amd_f77simple.f ../Lib/libamdf77.a
+amd_f77simple: amd_f77simple.f f77lib
 	$(F77) $(F77FLAGS) -o amd_f77simple amd_f77simple.f \
 	    ../Lib/libamdf77.a $(F77LIB)
 	./amd_f77simple > my_amd_f77simple.out
@@ -70,10 +80,18 @@ amd_f77cross:  amd_f77cross.f amd_f77wrapper.o ../Lib/libamd.a
 # Remove all but the files in the original distribution
 #------------------------------------------------------------------------------
 
-purge: clean
+clean:
+	- $(RM) -r $(CLEAN)
+
+purge: distclean
+
+distclean: clean
 	- $(RM) amd_demo my_amd_demo.out
+	- $(RM) amd_l_demo my_amd_l_demo.out
 	- $(RM) amd_demo2 my_amd_demo2.out
 	- $(RM) amd_simple my_amd_simple.out
 	- $(RM) amd_f77demo my_amd_f77demo.out
 	- $(RM) amd_f77simple my_amd_f77simple.out
 	- $(RM) amd_f77cross my_amd_f77cross.out
+	- $(RM) -r $(PURGE)
+

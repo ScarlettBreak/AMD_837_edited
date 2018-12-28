@@ -3,10 +3,9 @@
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-/* AMD Version 1.1 (Jan. 21, 2004), Copyright (c) 2004 by Timothy A. Davis,  */
-/* Patrick R. Amestoy, and Iain S. Duff.  See ../README for License.         */
-/* email: davis@cise.ufl.edu    CISE Department, Univ. of Florida.           */
-/* web: http://www.cise.ufl.edu/research/sparse/amd                          */
+/* AMD Copyright (c) by Timothy A. Davis,				     */
+/* Patrick R. Amestoy, and Iain S. Duff.  See ../README.txt for License.     */
+/* DrTimothyAldenDavis@gmail.com, http://www.suitesparse.com                 */
 /* ------------------------------------------------------------------------- */
 
 /* A simple C main program that illustrates the use of the ANSI C interface
@@ -20,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main (int argc, char **argv)
+int main (void)
 {
     /* The symmetric can_24 Harwell/Boeing matrix (jumbled, and not symmetric).
      * Since AMD operates on A+A', only A(i,j) or A(j,i) need to be specified,
@@ -55,7 +54,6 @@ int main (int argc, char **argv)
 	/* column 22: */
 	/* column 23: */    12, 11, 12, 23 } ;
 
-    int Rp [25], Ri [116] ;
     int P [24], Pinv [24], i, j, k, jnew, p, inew, result ;
     double Control [AMD_CONTROL], Info [AMD_INFO] ;
     char A [24][24] ;
@@ -75,8 +73,7 @@ int main (int argc, char **argv)
 	   "   passed to AMD, since AMD computes the ordering of A+A'.  The\n"
 	   "   diagonal entries are also not needed, since AMD ignores them.\n"
 	   "   This version of the matrix has jumbled columns and duplicate\n"
-	   "   row indices, and must be fixed by amd_preprocess prior to\n"
-	   "   ordering it with amd_order.\n" , n, n, nz) ;
+	   "   row indices.\n", n, n, nz) ;
     for (j = 0 ; j < n ; j++)
     {
 	printf ("\nColumn: %d, number of entries: %d, with row indices in"
@@ -115,57 +112,7 @@ int main (int argc, char **argv)
 	printf ("\n") ;
     }
 
-    /* sort, remove duplicates, and transpose A to get R */
-    result = amd_preprocess (n, Ap, Ai, Rp, Ri) ;
-    printf ("return value from amd_preprocess: %d (should be %d)\n",
-	result, AMD_OK) ;
-
-    if (result != AMD_OK)
-    {
-	printf ("AMD failed\n") ;
-	exit (1) ;
-    }
-
-    /* print the sorted/transposed matrix R */
-    printf ("\nThe column-oriented form of the sorted/transposed matrix R:\n");
-    for (j = 0 ; j < n ; j++)
-    {
-	printf ("\nColumn: %d, number of entries: %d, with row indices in"
-		" Ri [%d ... %d]:\n    row indices:",
-		j, Rp [j+1] - Rp [j], Rp [j], Rp [j+1]-1) ;
-	for (p = Rp [j] ; p < Rp [j+1] ; p++)
-	{
-	    i = Ri [p] ;
-	    printf (" %d", i) ;
-	}
-	printf ("\n") ;
-    }
-
-    /* print a character plot of the matrix R. */
-    printf ("\nPlot of the sorted/transposed matrix R:\n") ;
-    for (j = 0 ; j < n ; j++)
-    {
-	for (i = 0 ; i < n ; i++) A [i][j] = '.' ;
-	for (p = Rp [j] ; p < Rp [j+1] ; p++)
-	{
-	    i = Ri [p] ;
-	    A [i][j] = 'X' ;
-	}
-    }
-    printf ("    ") ;
-    for (j = 0 ; j < n ; j++) printf (" %1d", j % 10) ;
-    printf (" \n") ;
-    for (i = 0 ; i < n ; i++)
-    {
-	printf ("%2d: ", i) ;
-	for (j = 0 ; j < n ; j++)
-	{
-	    printf (" %c", A [i][j]) ;
-	}
-	printf (" \n") ;
-    }
-
-    /* print a character plot of the matrix R+R'. */
+    /* print a character plot of the matrix A+A'. */
     printf ("\nPlot of symmetric matrix to be ordered by amd_order:\n") ;
     for (j = 0 ; j < n ; j++)
     {
@@ -174,9 +121,9 @@ int main (int argc, char **argv)
     for (j = 0 ; j < n ; j++)
     {
 	A [j][j] = 'X' ;
-	for (p = Rp [j] ; p < Rp [j+1] ; p++)
+	for (p = Ap [j] ; p < Ap [j+1] ; p++)
 	{
-	    i = Ri [p] ;
+	    i = Ai [p] ;
 	    A [i][j] = 'X' ;
 	    A [j][i] = 'X' ;
 	}
@@ -195,14 +142,14 @@ int main (int argc, char **argv)
     }
 
     /* order the matrix */
-    result = amd_order (n, Rp, Ri, P, Control, Info) ;
+    result = amd_order (n, Ap, Ai, P, Control, Info) ;
     printf ("return value from amd_order: %d (should be %d)\n",
-	result, AMD_OK) ;
+	result, AMD_OK_BUT_JUMBLED) ;
 
     /* print the statistics */
     amd_info (Info) ;
 
-    if (result != AMD_OK)
+    if (result != AMD_OK_BUT_JUMBLED)
     {
 	printf ("AMD failed\n") ;
 	exit (1) ;
@@ -237,9 +184,9 @@ int main (int argc, char **argv)
     {
 	j = P [jnew] ;
 	A [jnew][jnew] = 'X' ;
-	for (p = Rp [j] ; p < Rp [j+1] ; p++)
+	for (p = Ap [j] ; p < Ap [j+1] ; p++)
 	{
-	    inew = Pinv [Ri [p]] ;
+	    inew = Pinv [Ai [p]] ;
 	    A [inew][jnew] = 'X' ;
 	    A [jnew][inew] = 'X' ;
 	}

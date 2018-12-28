@@ -3,10 +3,9 @@
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-/* AMD Version 1.1 (Jan. 21, 2004), Copyright (c) 2004 by Timothy A. Davis,  */
-/* Patrick R. Amestoy, and Iain S. Duff.  See ../README for License.         */
-/* email: davis@cise.ufl.edu    CISE Department, Univ. of Florida.           */
-/* web: http://www.cise.ufl.edu/research/sparse/amd                          */
+/* AMD Copyright (c) by Timothy A. Davis,				     */
+/* Patrick R. Amestoy, and Iain S. Duff.  See ../README.txt for License.     */
+/* email: DrTimothyAldenDavis@gmail.com                                      */
 /* ------------------------------------------------------------------------- */
 
 /* Fortran interface for the C-callable AMD library (int version only).  This
@@ -22,14 +21,6 @@
  * after each routine name.  C doesn't do this, so the translation is made
  * here.  Some Fortran compilers don't append an underscore (xlf on IBM AIX,
  * for * example).
- *
- * Tested with the following compilers:
- * Solaris with cc and f77 from Sun WorkShop 6 update 1.
- * SGI Irix with MIPSpro cc and f77 compilers version 7.4
- * Linux with GNU gcc or Intel's icc, and GNU g77 Intel's ifc Fortran compiler.
- *	(any combination).  Note that with g77, a call to amd_order in Fortran
- *	gets translated to a call to amd_order__, with two underscores ("_").
- *	Thus, the Fortran names do not include an underscore.
  */
 
 #include "amd.h"
@@ -65,12 +56,6 @@ void amdinfo_ (double *Info)
     fflush (stdout) ;
 }
 
-void amdpreproc_ (int *n, const int *Ap, const int *Ai, int *Rp, int *Ri)
-{
-    int result = amd_preprocess (*n, Ap, Ai, Rp, Ri) ;
-    if (result != AMD_OK && Rp) Rp [0] = result ;
-}
-
 /* ------------------------------------------------------------------------- */
 /* IBM AIX.  Probably Windows, Compaq Alpha, and HP Unix as well. */
 /* ------------------------------------------------------------------------- */
@@ -99,10 +84,4 @@ void amdinfo (double *Info)
     fflush (stdout) ;
     amd_info (Info) ;
     fflush (stdout) ;
-}
-
-void amdpreproc (int *n, const int *Ap, const int *Ai, int *Rp, int *Ri)
-{
-    int result = amd_preprocess (*n, Ap, Ai, Rp, Ri) ;
-    if (result != AMD_OK && Rp) Rp [0] = result ;
 }

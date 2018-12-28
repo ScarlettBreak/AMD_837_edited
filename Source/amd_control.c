@@ -3,10 +3,9 @@
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-/* AMD Version 1.1 (Jan. 21, 2004), Copyright (c) 2004 by Timothy A. Davis,  */
-/* Patrick R. Amestoy, and Iain S. Duff.  See ../README for License.         */
-/* email: davis@cise.ufl.edu    CISE Department, Univ. of Florida.           */
-/* web: http://www.cise.ufl.edu/research/sparse/amd                          */
+/* AMD, Copyright (c) Timothy A. Davis,					     */
+/* Patrick R. Amestoy, and Iain S. Duff.  See ../README.txt for License.     */
+/* email: DrTimothyAldenDavis@gmail.com                                      */
 /* ------------------------------------------------------------------------- */
 
 /* User-callable.  Prints the control parameters for AMD.  See amd.h
@@ -35,16 +34,18 @@ GLOBAL void AMD_control
 	aggressive = AMD_DEFAULT_AGGRESSIVE ;
     }
 
-    PRINTF (("\namd:  approximate minimum degree ordering, parameters:\n"
-	"    dense row parameter: %g\n", alpha)) ;
+    SUITESPARSE_PRINTF ((
+        "\nAMD version %d.%d.%d, %s: approximate minimum degree ordering\n"
+	"    dense row parameter: %g\n", AMD_MAIN_VERSION, AMD_SUB_VERSION,
+	AMD_SUBSUB_VERSION, AMD_DATE, alpha)) ;
 
     if (alpha < 0)
     {
-	PRINTF (("    no rows treated as dense\n")) ;
+	SUITESPARSE_PRINTF (("    no rows treated as dense\n")) ;
     }
     else
     {
-	PRINTF ((
+	SUITESPARSE_PRINTF ((
 	"    (rows with more than max (%g * sqrt (n), 16) entries are\n"
 	"    considered \"dense\", and placed last in output permutation)\n",
 	alpha)) ;
@@ -52,10 +53,12 @@ GLOBAL void AMD_control
 
     if (aggressive)
     {
-	PRINTF (("    aggressive absorption:  yes\n\n")) ;
+	SUITESPARSE_PRINTF (("    aggressive absorption:  yes\n")) ;
     }
     else
     {
-	PRINTF (("    aggressive absorption:  no\n\n")) ;
+	SUITESPARSE_PRINTF (("    aggressive absorption:  no\n")) ;
     }
+
+    SUITESPARSE_PRINTF (("    size of AMD integer: %d\n\n", sizeof (Int))) ;
 }

@@ -1,52 +1,73 @@
 #------------------------------------------------------------------------------
-# AMD Makefile (for GNU Make or original make)
+# AMD Makefile
 #------------------------------------------------------------------------------
 
-# Compile everything, including the C-callable routine and the mexFunctions.
-# Do not compile the FORTRAN versions.
-all:
-	( cd Source ; make )
-	( cd Demo   ; make )
-	( cd MATLAB ; make )
-	- cat Doc/License
+SUITESPARSE ?= $(realpath $(CURDIR)/..)
+export SUITESPARSE
 
-# compile just the C-callable libraries and demo programs (not mexFunctions)
-lib:
-	( cd Source ; make )
-	( cd Demo   ; make )
-	- cat Doc/License
+default: all
+
+include ../SuiteSparse_config/SuiteSparse_config.mk
+
+demos: all
+
+# Compile all C code.  Do not compile the FORTRAN versions.
+all:
+	( cd Lib    ; $(MAKE) )
+	( cd Demo   ; $(MAKE) )
+
+# compile just the C-callable libraries (not Demos)
+library:
+	( cd Lib    ; $(MAKE) )
+
+# compile the static libraries only
+static:
+	( cd Lib    ; $(MAKE) static )
 
 # compile the FORTRAN libraries and demo programs (not compiled by "make all")
 fortran:
-	( cd Source ; make fortran )
-	( cd Demo   ; make fortran )
-	- cat Doc/License
+	( cd Lib    ; $(MAKE) fortran )
+	( cd Demo   ; $(MAKE) fortran )
 
 # compile a FORTRAN demo program that calls the C version of AMD
 # (not compiled by "make all")
 cross:
-	( cd Demo   ; make cross )
-	- cat Doc/License
+	( cd Demo   ; $(MAKE) cross )
 
 # remove object files, but keep the compiled programs and library archives
 clean:
-	( cd Source ; make clean )
-	( cd Demo   ; make clean )
-	( cd MATLAB ; make clean )
-	( cd Doc    ; make clean )
+	( cd Lib    ; $(MAKE) clean )
+	( cd Demo   ; $(MAKE) clean )
+	( cd MATLAB ; $(RM) $(CLEAN) )
+	( cd Doc    ; $(MAKE) clean )
 
 # clean, and then remove compiled programs and library archives
 purge:
-	( cd Source ; make purge )
-	( cd Demo   ; make purge )
-	( cd MATLAB ; make purge )
-	( cd Doc    ; make purge )
+	( cd Lib    ; $(MAKE) purge )
+	( cd Demo   ; $(MAKE) purge )
+	( cd MATLAB ; $(RM) $(CLEAN) ; $(RM) *.mex* )
+	( cd Doc    ; $(MAKE) purge )
+
+distclean: purge
 
 # create PDF documents for the original distribution
-doc:
-	( cd Doc    ; make )
+docs:
+	( cd Doc    ; $(MAKE) )
 
 # get ready for distribution
 dist: purge
-	( cd Demo   ; make dist )
-	( cd Doc    ; make )
+	( cd Demo   ; $(MAKE) dist )
+	( cd Doc    ; $(MAKE) )
+
+ccode: library
+
+lib: library
+
+# install AMD
+install:
+	( cd Lib  ; $(MAKE) install )
+
+# uninstall AMD
+uninstall:
+	( cd Lib  ; $(MAKE) uninstall )
+
